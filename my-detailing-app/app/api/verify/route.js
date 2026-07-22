@@ -9,6 +9,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getCalendarClient } from "../../../lib/googleCalendar";
 
+const TIMEZONE = process.env.BUSINESS_TIMEZONE || "America/Chicago";
+
 function supabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -63,8 +65,8 @@ export async function GET(request) {
           .filter(Boolean)
           .join("\n"),
         location: appointment.service_address,
-        start: { dateTime: appointment.booking_start_timestamp },
-        end: { dateTime: appointment.booking_end_timestamp },
+        start: { dateTime: appointment.booking_start_timestamp, timeZone: TIMEZONE },
+        end: { dateTime: appointment.booking_end_timestamp, timeZone: TIMEZONE },
       },
     });
 

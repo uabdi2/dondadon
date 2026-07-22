@@ -25,11 +25,11 @@ const TIMEZONE = process.env.BUSINESS_TIMEZONE || "America/Chicago";
 // Don's operational windows. 0 = Sunday ... 6 = Saturday. null = closed.
 const BUSINESS_HOURS = {
   0: null,
-  1: { start: "17:00", end: "21:00" },
-  2: { start: "17:00", end: "21:00" },
-  3: { start: "17:00", end: "21:00" },
-  4: { start: "17:00", end: "21:00" },
-  5: { start: "17:00", end: "21:00" },
+  1: { start: "16:00", end: "21:00" },
+  2: { start: "16:00", end: "21:00" },
+  3: { start: "16:00", end: "21:00" },
+  4: { start: "16:00", end: "21:00" },
+  5: { start: "16:00", end: "21:00" },
   6: { start: "08:00", end: "20:00" },
 };
 
@@ -66,7 +66,22 @@ async function getGoogleBusyRanges(dayStartUtc, dayEndUtc) {
     },
   });
 
-  const busy = res.data.calendars?.[calendarId]?.busy || [];
+  // Google's FreeBusy API reports per-calendar failures (bad calendar ID,
+  // calendar not shared with the service account, etc.) as an `errors` array
+  // inside a 200 response — never as an HTTP error. Reading only `.busy`
+  // here would silently treat a broken calendar as "nothing busy", showing
+  // every slot as open even though Don's real calendar was never checked.
+  const calendarResult = res.data.calendars?.[calendarId];
+  if (calendarResult?.errors?.length) {
+    throw new Error(
+      `Google FreeBusy could not read calendar "${calendarId}": ` +
+        JSON.stringify(calendarResult.errors) +
+        ". Check GOOGLE_CALENDAR_ID and that the calendar is shared with " +
+        `${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL} ("Make changes to events").`
+    );
+  }
+
+  const busy = calendarResult?.busy || [];
   return busy.map((b) => ({ start: new Date(b.start), end: new Date(b.end) }));
 }
 

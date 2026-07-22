@@ -10,7 +10,7 @@ import BookingWizard from "./BookingWizard";
 export const metadata = {
   title: "Premium Mobile Car Detailing Booking | Don's Professional Car Detailing | Omaha, NE",
   description:
-    "Book professional mobile car detailing in Omaha, Nebraska with Don's Professional Car Detailing. Interior detailing, full details, seat extraction, and exterior washes brought directly to your driveway.",
+    "Book professional mobile car detailing in Omaha, Nebraska with Don's Professional Car Detailing. Full Interior & Exterior Combo, Seat Wash, and Exterior Wash — brought directly to your driveway.",
 };
 
 const jsonLd = buildLocalBusinessSchema({ path: "/book" });

@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes } from "crypto";
+import nodemailer from "nodemailer";
 import { findService } from "../../../lib/services";
 import { verificationEmailHtml } from "../../../lib/emailTemplates";
 
@@ -27,11 +28,34 @@ function filled(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-async function sendVerificationEmail({ request, to, name, token, serviceName, bookingStart }) {
-  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) return;
+let gmailTransporter;
+function getGmailTransporter() {
+  if (!gmailTransporter) {
+    gmailTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  }
+  return gmailTransporter;
+}
+
+async function sendVerificationEmail({ verifyUrl, to, name, serviceName, bookingStart }) {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn(
+      "[book] Skipping verification email — GMAIL_USER or GMAIL_APP_PASSWORD is missing. " +
+        "Set both in .env.local (the app password comes from your Google Account's " +
+        "App Passwords page), or just use the confirmation URL logged above to test " +
+        "without email.\n" +
+        `[book]   GMAIL_USER set: ${Boolean(process.env.GMAIL_USER)}, ` +
+        `GMAIL_APP_PASSWORD set: ${Boolean(process.env.GMAIL_APP_PASSWORD)}`
+    );
+    return;
+  }
 
   try {
-    const verifyUrl = new URL(`/api/verify?token=${token}`, request.url).toString();
     const dateLabel = new Intl.DateTimeFormat("en-US", {
       timeZone: TIMEZONE,
       weekday: "long",
@@ -44,29 +68,22 @@ async function sendVerificationEmail({ request, to, name, token, serviceName, bo
       minute: "2-digit",
     }).format(bookingStart);
 
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL,
-        to,
-        subject: "Confirm your appointment with Don's Professional Car Detailing",
-        html: verificationEmailHtml({
-          customerName: name,
-          serviceName,
-          dateLabel,
-          timeLabel,
-          verifyUrl,
-        }),
+    await getGmailTransporter().sendMail({
+      from: process.env.GMAIL_USER,
+      to,
+      subject: "Confirm your appointment with Don's Professional Car Detailing",
+      html: verificationEmailHtml({
+        customerName: name,
+        serviceName,
+        dateLabel,
+        timeLabel,
+        verifyUrl,
       }),
     });
   } catch (err) {
     // A failed send never blocks the booking — the hold still exists and
     // simply expires in 2 hours if the customer never verifies.
-    console.error("Verification email failed to send:", err);
+    console.error("[book] Verification email send failed:", err);
   }
 }
 
@@ -162,11 +179,19 @@ export async function POST(request) {
     );
   }
 
+  const verifyUrl = new URL(`/api/verify?token=${verificationToken}`, request.url).toString();
+
+  // Local-dev bypass: this lets you confirm a booking (and trigger the
+  // Google Calendar write in /api/verify) without a working email service —
+  // copy/paste the URL straight into a browser tab.
+  console.log(`[book] Appointment ${appointment.id} pending verification.`);
+  console.log(`[book] Confirmation URL: ${verifyUrl}`);
+  console.log(`[book] Confirmation token: ${verificationToken}`);
+
   await sendVerificationEmail({
-    request,
+    verifyUrl,
     to: customerEmail.trim(),
     name: customerName.trim(),
-    token: verificationToken,
     serviceName: servicePreset.name,
     bookingStart,
   });

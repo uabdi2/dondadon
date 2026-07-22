@@ -7,7 +7,7 @@ import { buildLocalBusinessSchema } from "../../lib/business";
 export const metadata = {
   title: "Detailing Services & Pricing | Don's Professional Car Detailing | Omaha, NE",
   description:
-    "Explore Don's Professional Car Detailing service menu — full details, interior detailing, seat extraction, and express washes for Omaha, Nebraska. Mobile service, driveway convenience.",
+    "Explore Don's Professional Car Detailing service menu — Full Interior & Exterior Combo, Seat Wash, and Exterior Wash for Omaha, Nebraska. Mobile service, driveway convenience.",
 };
 
 const jsonLd = buildLocalBusinessSchema({ path: "/services" });
@@ -68,16 +68,11 @@ export default function ServicesPage() {
           ))}
         </div>
 
-        <div className="mt-6 flex items-start gap-4 rounded-xl border border-[#2A2A2A] bg-[#111111] p-5">
-          <span className="text-2xl" aria-hidden="true">
-            🚗
-          </span>
-          <div>
-            <p className="font-bold text-white">Mobile Service — We come to you!</p>
-            <p className="text-sm text-[#B3B3B3]">
-              All we need is access to your driveway or parking space.
-            </p>
-          </div>
+        <div className="mt-6 rounded-xl border border-[#2A2A2A] bg-[#111111] p-5">
+          <p className="font-bold text-white">Mobile Service — We come to you!</p>
+          <p className="text-sm text-[#B3B3B3]">
+            All we need is access to your driveway or parking space.
+          </p>
         </div>
       </div>
     </main>

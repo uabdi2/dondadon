@@ -4,5 +4,45 @@
 
 html,
 body {
-  background-color: #0b0b0b;
+  background-color: #0f0f10;
+}
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+::selection {
+  background-color: #b08d57;
+  color: #0f0f10;
+}
+
+/* Performance-optimized static grain: a single tiled bitmap layered via
+   pseudo-element, no animation loop, cheap to composite on dark surfaces. */
+.grain-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: theme("backgroundImage.grain");
+  background-size: 140px 140px;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+.text-balance {
+  text-wrap: balance;
 }
