@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { createPrivateKey } from "crypto";
 
 // Netlify (and most serverless hosts) mangle multi-line env vars in a few
 // different ways depending on how they were pasted into the dashboard:
@@ -11,8 +12,24 @@ import { google } from "googleapis";
 // `error:1E08010C:DECODER routines::unsupported` — it never says "bad
 // newlines", so this normalizes every variant before the key reaches
 // google.auth.JWT.
+// Logs shape metadata only — never the base64 key body — so a bad value
+// can be diagnosed from function logs without exposing the secret.
+function logKeyShape(label, key) {
+  const lines = key.split("\n");
+  console.log(
+    `[googleCalendar] ${label}: length=${key.length} lines=${lines.length} ` +
+      `literalEscapes=${(key.match(/\\n/g) || []).length} ` +
+      `realNewlines=${(key.match(/\n/g) || []).length} ` +
+      `carriageReturns=${(key.match(/\r/g) || []).length} ` +
+      `startsWithQuote=${key[0] === '"' || key[0] === "'"} ` +
+      `head="${key.slice(0, 27)}" tail="${key.slice(-25)}" ` +
+      `lineLengths=[${lines.map((l) => l.length).join(",")}]`
+  );
+}
+
 function normalizePrivateKey(rawKey) {
   let key = (rawKey || "").trim();
+  logKeyShape("raw env value", key);
 
   if (
     (key.startsWith('"') && key.endsWith('"')) ||
@@ -31,6 +48,19 @@ function normalizePrivateKey(rawKey) {
     throw new Error(
       "GOOGLE_PRIVATE_KEY is missing PEM BEGIN/END markers after normalization — " +
         "check the value in your environment variables (see lib/googleCalendar.js for the expected format)."
+    );
+  }
+
+  logKeyShape("normalized key", key);
+
+  try {
+    createPrivateKey(key);
+  } catch (err) {
+    throw new Error(
+      `GOOGLE_PRIVATE_KEY normalized but is not a valid PEM key (${err.message}). ` +
+        "The key body itself is likely corrupted (truncated, extra whitespace injected " +
+        "per line, or wrong key type) — re-copy private_key fresh from the service " +
+        "account's downloaded JSON and reset the Netlify env var."
     );
   }
 
