@@ -44,12 +44,23 @@ function normalizePrivateKey(rawKey) {
     .replace(/\r\n/g, "\n")
     .replace(/\r/g, "\n");
 
-  if (!key.includes("BEGIN PRIVATE KEY") || !key.includes("END PRIVATE KEY")) {
+  // Rebuild the PEM from scratch rather than trusting whatever internal line
+  // breaks survived the env var round-trip: Netlify's dashboard has been
+  // observed splicing spurious blank lines into multi-line values (and even
+  // splitting a line mid-base64), which OpenSSL's PEM decoder rejects with
+  // the same opaque DECODER error even though every base64 character is
+  // still intact. Base64 doesn't care about line length, so stripping all
+  // whitespace from the body and re-wrapping at 64 chars is always safe.
+  const match = key.match(/-----BEGIN PRIVATE KEY-----([\s\S]*?)-----END PRIVATE KEY-----/);
+  if (!match) {
     throw new Error(
       "GOOGLE_PRIVATE_KEY is missing PEM BEGIN/END markers after normalization — " +
         "check the value in your environment variables (see lib/googleCalendar.js for the expected format)."
     );
   }
+  const body = match[1].replace(/\s+/g, "");
+  const rewrapped = body.match(/.{1,64}/g).join("\n");
+  key = `-----BEGIN PRIVATE KEY-----\n${rewrapped}\n-----END PRIVATE KEY-----\n`;
 
   logKeyShape("normalized key", key);
 
