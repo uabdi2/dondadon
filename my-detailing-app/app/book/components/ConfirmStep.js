@@ -1,5 +1,7 @@
 "use client";
 
+import { BUSINESS_PHONE_DISPLAY, BUSINESS_PHONE_TEL } from "../../../lib/business";
+
 function Row({ label, value }) {
   return (
     <div className="flex justify-between gap-4 border-b border-[#2A2A2A] pb-3 last:border-0 last:pb-0">
@@ -51,6 +53,18 @@ export default function ConfirmStep({
           <Row label="Vehicle" value={vehicleSummary} />
           {values.notes && <Row label="Notes" value={values.notes} />}
         </dl>
+      </div>
+
+      <div className="mt-6 rounded-xl border border-[#2A2A2A] bg-[#171717] px-5 py-4">
+        <p className="text-sm font-bold text-white">No Cancellation Fees!</p>
+        <p className="mt-1 text-sm leading-relaxed text-[#B3B3B3]">
+          We know life happens. If you need to reschedule or cancel your appointment, simply call
+          or text us directly at{" "}
+          <a href={`tel:${BUSINESS_PHONE_TEL}`} className="font-semibold text-white hover:underline">
+            {BUSINESS_PHONE_DISPLAY}
+          </a>
+          .
+        </p>
       </div>
 
       {submitError && (

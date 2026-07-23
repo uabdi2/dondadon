@@ -97,7 +97,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Meet Don — text-only editorial feature */}
+      {/* About Us */}
       <section className="bg-panel px-4 py-12 sm:px-8 sm:py-14 lg:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="grain-surface relative overflow-hidden rounded-[32px] border border-silver/10 bg-ink px-6 py-14 text-center sm:px-12 sm:py-16 lg:py-20">
@@ -111,26 +111,26 @@ export default function HomePage() {
             />
             <div className="relative mx-auto max-w-3xl">
               <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-accent-bright">
-                Owner-Operated
+                About Us
               </span>
               <h2 className="mt-6 text-balance font-serif text-4xl font-semibold leading-tight text-paper sm:text-5xl lg:text-[3.25rem]">
-                Who&rsquo;s Behind the Work? Meet Don.
+                Detailing, Done Right &mdash; Every Time.
               </h2>
               <p className="mt-8 text-lg leading-relaxed text-paper/70 sm:text-xl">
-                Don&rsquo;s Mobile Detailing is a strictly{" "}
-                <span className="font-semibold text-accent-bright">owner-operated</span>{" "}
-                mobile wash and interior specialist. With years of dedicated
-                detailing experience, Don doesn&rsquo;t just wash cars&mdash;he
-                performs complete deep-clean transformations.
+                Don&rsquo;s Professional Car Detailing was built on one standard:
+                treat every vehicle like it&rsquo;s the only one that matters.
+                From the first rinse to the final walk-around, we bring a
+                craftsman&rsquo;s eye to every job&mdash;meticulous hand-washing,
+                deep interior extraction, leather conditioning, and a finish
+                that holds up long after we&rsquo;ve left your driveway.
               </p>
               <p className="mt-5 text-lg leading-relaxed text-paper/60 sm:text-xl">
-                When you book, you skip the franchise crews and get the owner
-                himself right in your driveway. From meticulous hand-washes and
-                tire dressing to deep interior extraction and leather
-                conditioning, the same expert hands treat every vehicle. Don
-                cleans every nook and cranny like it&rsquo;s facing a strict
-                inspection. If it&rsquo;s not pristine, he stays until it is.
-                That&rsquo;s the unhurried, premium standard Omaha drivers trust.
+                We don&rsquo;t cut corners, and we don&rsquo;t rush the process.
+                Every vehicle is inspected before we call the job done, and if
+                something&rsquo;s not right, we make it right before we leave.
+                That&rsquo;s the hardworking, detail-obsessed standard Omaha
+                drivers have come to expect&mdash;and the reason they keep
+                coming back.
               </p>
             </div>
           </div>

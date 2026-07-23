@@ -30,8 +30,8 @@ export default function Hero() {
             </h1>
 
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-paper/70 sm:text-xl">
-              Interior and exterior detailing performed personally by Don throughout
-              Omaha.
+              Mobile interior and exterior detailing brought directly to your
+              driveway in Omaha.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">

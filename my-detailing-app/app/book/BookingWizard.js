@@ -168,6 +168,21 @@ export default function BookingWizard() {
           A confirmation link has been sent to your inbox. You must verify your appointment within
           2 hours to reserve your selected time slot.
         </p>
+
+        <div className="mt-8 w-full max-w-md rounded-xl border border-[#2A2A2A] bg-[#0B0B0B] px-5 py-5 text-left">
+          <p className="text-sm font-bold text-white">
+            📩 Important Step to Confirm Your Appointment:
+          </p>
+          <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[#B3B3B3]">
+            <li>1. Check your email inbox (and Spam/Junk folder) for your confirmation email.</li>
+            <li>2. If it lands in Spam, click &ldquo;Report as Not Spam&rdquo; at the top of the email.</li>
+            <li>
+              3. Open the email in your primary inbox and click &ldquo;Confirm My
+              Appointment&rdquo; within 2 hours to hold your spot!
+            </li>
+          </ol>
+        </div>
+
         <p className="mt-4 max-w-md text-sm text-[#B3B3B3]">
           If verification is not completed before expiration, the appointment request will
           automatically expire.
